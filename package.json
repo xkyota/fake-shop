@@ -5,7 +5,8 @@
 	"source": "src/index.html",
 	"scripts": {
 		"start": "parcel",
-		"build": "parcel build"
+		"build": "parcel build", 
+		"server": "cd ../server && npx json-server db.json"
 	},
 	"devDependencies": {
 		"assert": "^2.1.0",
