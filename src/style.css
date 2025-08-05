@@ -281,3 +281,10 @@ section.cart h2 {
 	background: #2f855a;
 	transform: translateY(-2px) scale(1.04);
 }
+
+.products{ 
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
