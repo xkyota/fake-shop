@@ -1,3 +1,5 @@
+import debounce from 'lodash/debounce';
+
 const productsList = document.querySelector(".product-list");
 const date = document.querySelector(".date");
 const loadMoreBtn = document.querySelector(".load-more");
@@ -24,7 +26,7 @@ function renderPosts(posts) {
 			return ` 
 			<li class="product-item">
                 <img src="${image}" alt="${title}" />
-                <h3>${brand}</h3>
+                <h3>${title.slice(0, 10)}...</h3>
                 <p>$${price}</p>
 				<span>${description.slice(0, 15)}...</span>
                 <button class="add-to-cart" data-id="${_id}">Add to Cart</button>
@@ -54,7 +56,7 @@ async function loadAndRenderPosts() {
 			</div>
 		`;
 
-		loadMoreBtn.style.display = 'none'; 
+		loadMoreBtn.style.display = "none";
 
 		// const LoadMoreHTML = `<button class="load-more">Load More</button>`;
 
@@ -71,11 +73,10 @@ async function loadAndRenderPosts() {
 			renderPosts(posts);
 			page += 1;
 
-			loadMoreBtn.style.display = 'none'; 
+			loadMoreBtn.style.display = "none";
 
 			// productsSection.insertAdjacentHTML("beforeend", LoadMoreHTML);
 		}, 1000);
-
 	} catch (error) {
 		console.error("Error fetching posts:", error);
 	}
@@ -118,4 +119,63 @@ function addToCart(product) {
 	cart.push(product);
 	localStorage.setItem("cart", JSON.stringify(cart));
 	alert(`${product.title} added to cart`);
+}
+
+// ✅ debounce-функция
+function debounce(func, delay) {
+	let timeoutId;
+	return function (...args) {
+		clearTimeout(timeoutId);
+		timeoutId = setTimeout(() => {
+			func.apply(this, args);
+		}, delay);
+	};
+}
+
+const searchInput = document.querySelector(".search");
+
+const handleSearch = debounce(() => {
+	const searchElement = searchInput ? searchInput.value.trim() : "";
+	console.log("Searching... :", searchElement); 
+
+	fetch(`http://localhost:3000/data?search=${encodeURIComponent(searchElement)}`)
+		.then((res) => {
+			if (!res.ok) {
+				throw new Error("Failed to fetch search results");
+			}
+			return res.json();
+		})
+		.then((data) => {
+			console.log("Found:", data); 
+
+			productsList.innerHTML = "";
+
+			if (!data.length) {
+				productsList.innerHTML = "<p>Nothing found</p>";
+				return;
+			}
+
+			const markup = data
+				.map(({ title, price, description, image, _id }) => {
+					return `
+						<li class="product-item">
+							<img src="${image}" alt="${title}" />
+							<h3>${title.slice(0, 10)}...</h3>
+							<p>$${price}</p>
+							<span>${description.slice(0, 15)}...</span>
+							<button class="add-to-cart" data-id="${_id}">Add to Cart</button>
+						</li>`;
+				})
+				.join("");
+
+			productsList.insertAdjacentHTML("beforeend", markup);
+		})
+		.catch((error) => {
+			console.error("Search error:", error);
+			alert("Error: " + error.message);
+		});
+}, 300);
+
+if (searchInput) {
+	searchInput.addEventListener("input", handleSearch);
 }
