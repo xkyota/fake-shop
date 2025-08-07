@@ -73,7 +73,7 @@ async function loadAndRenderPosts() {
 			renderPosts(posts);
 			page += 1;
 
-			loadMoreBtn.style.display = "none";
+			loadMoreBtn.style.display = "block";
 
 			// productsSection.insertAdjacentHTML("beforeend", LoadMoreHTML);
 		}, 1000);
@@ -85,9 +85,12 @@ async function loadAndRenderPosts() {
 loadAndRenderPosts();
 
 loadMoreBtn.addEventListener("click", async () => {
-	loadMoreBtn.style.display = "none";
+	loadMoreBtn.style.display = "0";
 	await loadAndRenderPosts();
-	loadMoreBtn.style.display = "inherit";
+
+	setTimeout(() => {
+		loadMoreBtn.style.display = "inherit";
+	}, 1000);
 });
 
 //! Cart settings
@@ -136,9 +139,11 @@ const searchInput = document.querySelector(".search");
 
 const handleSearch = debounce(() => {
 	const searchElement = searchInput ? searchInput.value.trim() : "";
-	console.log("Searching... :", searchElement); 
+	console.log("Searching... :", searchElement);
 
-	fetch(`http://localhost:3000/data?search=${encodeURIComponent(searchElement)}`)
+	fetch(
+		`http://localhost:3000/data?title_like=${encodeURIComponent(searchElement)}`
+	)
 		.then((res) => {
 			if (!res.ok) {
 				throw new Error("Failed to fetch search results");
@@ -146,7 +151,7 @@ const handleSearch = debounce(() => {
 			return res.json();
 		})
 		.then((data) => {
-			console.log("Found:", data); 
+			console.log("Found:", data);
 
 			productsList.innerHTML = "";
 
@@ -176,6 +181,4 @@ const handleSearch = debounce(() => {
 		});
 }, 300);
 
-if (searchInput) {
-	searchInput.addEventListener("input", handleSearch);
-}
+searchInput.addEventListener("input", handleSearch);
