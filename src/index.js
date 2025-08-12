@@ -124,7 +124,6 @@ function addToCart(product) {
 	alert(`${product.title} added to cart`);
 }
 
-// ✅ debounce-функция
 function debounce(func, delay) {
 	let timeoutId;
 	return function (...args) {
