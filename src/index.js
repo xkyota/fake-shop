@@ -13,16 +13,14 @@ setInterval(updateDateTime, 1000);
 
 //! Pagination
 
-// Controls the group number
 let page = 7;
-// Controls the number of items in the group
 let perPage = 6;
 
 //! Fetching the product from server
 
 function renderPosts(posts) {
 	const markup = posts
-		.map(({ title, price, description, brand, image, _id }) => {
+		.map(({ title, price, description, image, _id }) => {
 			return ` 
 			<li class="product-item">
                 <img src="${image}" alt="${title}" />
@@ -58,10 +56,6 @@ async function loadAndRenderPosts() {
 
 		loadMoreBtn.style.display = "none";
 
-		// const LoadMoreHTML = `<button class="load-more">Load More</button>`;
-
-		// if (loadMoreBtn) loadMoreBtn.remove();
-
 		const productsSection = document.querySelector(".products");
 		productsSection.insertAdjacentHTML("beforeend", spinnerHTML);
 
@@ -75,7 +69,6 @@ async function loadAndRenderPosts() {
 
 			loadMoreBtn.style.display = "block";
 
-			// productsSection.insertAdjacentHTML("beforeend", LoadMoreHTML);
 		}, 1000);
 	} catch (error) {
 		console.error("Error fetching posts:", error);
